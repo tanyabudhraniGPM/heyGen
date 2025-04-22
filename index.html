@@ -33,23 +33,25 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     }
 
-    #transcription-box {
-      width: 90%;
-      max-width: 700px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 40px;
-      max-height: 220px;
-      overflow-y: auto;        /* Add this line */
-      box-sizing: border-box;
-    }
+   #transcription-box {
+    width: 95%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px auto 40px;
+    max-height: 140px;          /* ⬅️ Less tall */
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
   
     #transcript {
       white-space: pre-wrap;
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.4;
+      max-height: 100px;
+      overflow-y: auto;
     }
   
     #stop-btn {
@@ -130,8 +132,12 @@
       };
 
       recognition.onend = () => {
-        isRecognizing = false;
+        if (isRecognizing) {
+          // Chrome stops after ~1 minute, so we restart it manually
+          recognition.start();
+        }
       };
+
 
       recognition.start();
       isRecognizing = true;
