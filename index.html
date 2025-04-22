@@ -13,7 +13,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     header {
@@ -33,36 +33,64 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     }
 
-   #transcription-box {
-    width: 95%;
-    max-width: 900px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    margin: 20px auto 40px;
-    max-height: 140px;          /* ⬅️ Less tall */
-    overflow-y: auto;
-    box-sizing: border-box;
-  }
-  
+    #transcription-box {
+      width: 95%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px auto 40px;
+      max-height: 160px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    #transcription-box h3 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #a7d8ff;
+    }
+
     #transcript {
       white-space: pre-wrap;
       font-size: 15px;
       line-height: 1.4;
-      max-height: 100px;
+      max-height: 90px;
       overflow-y: auto;
     }
-  
-    #stop-btn {
-      margin-top: 10px;
+
+    .button-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
       padding: 10px 20px;
-      background-color: #ff4d4d;
-      color: white;
-      font-size: 16px;
+      font-size: 15px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #stop-btn {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    #stop-btn:hover {
+      background-color: #e04545;
+    }
+
+    #download-btn {
+      background-color: #1e90ff;
+      color: white;
+    }
+
+    #download-btn:hover {
+      background-color: #197be5;
     }
   </style>
 </head>
@@ -75,7 +103,10 @@
   <div id="transcription-box">
     <h3>Live Transcription</h3>
     <div id="transcript">[Waiting for speech input...]</div>
-    <button id="stop-btn">Stop Transcription</button>
+    <div class="button-row">
+      <button id="stop-btn">Stop Transcription</button>
+      <button id="download-btn">Download Transcript</button>
+    </div>
   </div>
 
   <!-- HeyGen Embed Script -->
@@ -102,9 +133,14 @@
   <script>
     const transcriptDiv = document.getElementById('transcript');
     const stopBtn = document.getElementById('stop-btn');
+    const downloadBtn = document.getElementById('download-btn');
     let recognition;
     let isRecognizing = false;
     let transcriptText = '';
+
+    function scrollTranscriptToBottom() {
+      transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
+    }
 
     function startRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -124,6 +160,7 @@
           }
         }
         transcriptDiv.textContent = transcriptText + interim;
+        scrollTranscriptToBottom();
       };
 
       recognition.onerror = (event) => {
@@ -133,11 +170,9 @@
 
       recognition.onend = () => {
         if (isRecognizing) {
-          // Chrome stops after ~1 minute, so we restart it manually
-          recognition.start();
+          recognition.start(); // Auto-restart
         }
       };
-
 
       recognition.start();
       isRecognizing = true;
@@ -151,12 +186,25 @@
       }
     });
 
+    downloadBtn.addEventListener('click', () => {
+      const blob = new Blob([transcriptText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'transcript.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
     // Auto-start if supported
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       startRecognition();
     } else {
       transcriptDiv.textContent = 'Speech Recognition is not supported in this browser.';
       stopBtn.disabled = true;
+      downloadBtn.disabled = true;
     }
   </script>
 
