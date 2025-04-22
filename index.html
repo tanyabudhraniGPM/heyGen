@@ -93,6 +93,12 @@
       background-color: #197be5;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("zd5soQJGLgbc8tItQw8_c"); // Replace with your actual EmailJS public key
+    })();
+  </script>
 </head>
 <body>
 
@@ -183,8 +189,19 @@
         recognition.stop();
         isRecognizing = false;
         transcriptDiv.textContent += '\n[Transcription stopped]';
+    
+        // Send transcript via EmailJS
+        emailjs.send("service_b5xqy6q", "template_gay22ga", {
+          transcript: transcriptText
+        }).then(() => {
+          alert("Transcript emailed successfully!");
+        }, (error) => {
+          console.error("EmailJS error:", error);
+          alert("Failed to send email: " + JSON.stringify(error));
+        });
       }
     });
+
 
     downloadBtn.addEventListener('click', () => {
       const blob = new Blob([transcriptText], { type: 'text/plain' });
