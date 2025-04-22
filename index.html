@@ -41,21 +41,19 @@
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 40px;
+      max-height: 220px;
+      overflow-y: auto;        /* Add this line */
+      box-sizing: border-box;
     }
-
-    #transcription-box h3 {
-      margin-top: 0;
-      font-size: 20px;
-      color: #a7d8ff;
-    }
-
+  
     #transcript {
       white-space: pre-wrap;
-      min-height: 80px;
-      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.4;
     }
-
+  
     #stop-btn {
+      margin-top: 10px;
       padding: 10px 20px;
       background-color: #ff4d4d;
       color: white;
@@ -63,9 +61,6 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-    }
-    #stop-btn:hover {
-      background-color: #e64545;
     }
   </style>
 </head>
