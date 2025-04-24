@@ -102,6 +102,39 @@ button:hover {
     #download-btn:hover {
       background-color: #197be5;
     }
+
+    .chat-message {
+      display: flex;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+  
+    .chat-message.interviewer {
+      justify-content: flex-start;
+    }
+  
+    .chat-message.interviewee {
+      justify-content: flex-end;
+    }
+  
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #ffffff1a;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+  
+    .chat-message.interviewer .chat-bubble {
+      background-color: #1e3d59;
+      border-bottom-left-radius: 0;
+    }
+  
+    .chat-message.interviewee .chat-bubble {
+      background-color: #2980b9;
+      border-bottom-right-radius: 0;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
@@ -118,7 +151,7 @@ button:hover {
 
   <div id="transcription-box">
     <h3>Live Transcription</h3>
-    <div id="transcript">[Waiting for speech input...]</div>
+    <div id="transcript"></div>
   </div>
   <div class="button-row">
     <button id="stop-btn">Stop Transcription</button>
@@ -155,6 +188,20 @@ button:hover {
     let isRecognizing = false;
     let transcriptText = '';
 
+    function renderChatMessage(role, text) {
+      const messageWrapper = document.createElement("div");
+      messageWrapper.classList.add("chat-message", role);
+    
+      const bubble = document.createElement("div");
+      bubble.classList.add("chat-bubble");
+      bubble.textContent = text;
+    
+      messageWrapper.appendChild(bubble);
+      transcriptDiv.appendChild(messageWrapper);
+      scrollTranscriptToBottom();
+    }
+
+
     function scrollTranscriptToBottom() {
       transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
     }
@@ -171,12 +218,13 @@ button:hover {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
           if (result.isFinal) {
-            transcriptText += result[0].transcript + '\n';
+            const userText = result[0].transcript;
+            transcriptText += "Interviewee: " + userText + '\n';
+            renderChatMessage("interviewee", userText);
           } else {
             interim += result[0].transcript;
           }
         }
-        transcriptDiv.textContent = transcriptText + interim;
         scrollTranscriptToBottom();
       };
 
@@ -199,7 +247,9 @@ button:hover {
       if (recognition && isRecognizing) {
         recognition.stop();
         isRecognizing = false;
-        transcriptDiv.textContent += '\n[Transcription stopped]';
+        renderChatMessage("interviewer", "[Transcription stopped]");
+        transcriptText += "Interviewer: [Transcription stopped]\n";
+
     
         // Send transcript via EmailJS
         emailjs.send("service_b5xqy6q", "template_gay22ga", {
