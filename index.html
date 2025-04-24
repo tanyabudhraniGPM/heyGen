@@ -201,6 +201,32 @@ button:hover {
       scrollTranscriptToBottom();
     }
 
+    function simulateInterviewerFlow() {
+      const prompts = [
+        "Hi! I'm June, your friendly HR Avatar for the first round of interviews at Gateway Private Markets.",
+        "Let’s start with your background – can you briefly introduce yourself and your experience?",
+        "Thanks for sharing. Could you tell me about any internships you’ve completed and describe a specific project you worked on?",
+        "Great – can you go into more detail about that project? What were your responsibilities and what did you learn?",
+        "Which of those skills do you think are most transferrable to the type of work we do here at Gateway?",
+        "Now a logic question: Imagine a fund has an IRR of 20% but no distributions yet. What concerns might an investor have?",
+        "Let’s switch gears. What’s your understanding of Gateway’s business model and what we focus on?",
+        "From your perspective, what kind of digital or AI tools could help us improve or innovate further?",
+        "Here’s a private markets question: Can you explain the difference between direct secondaries and LP secondaries?",
+        "Just one math logic test: If you have a $100M fund and 25% has been deployed, how much remains and what’s your utilization rate?",
+        "Before we wrap up – is there anything specific you’d like to talk about, or any questions for me about Gateway?",
+        "Thanks for your time. The hiring team will review the interview and revert with any follow-up items."
+      ];
+    
+      let delay = 1000;
+    
+      prompts.forEach((line, index) => {
+        setTimeout(() => {
+          renderChatMessage("interviewer", line);
+          transcriptText += "Interviewer: " + line + '\n';
+        }, delay);
+        delay += (line.length * 50) + 4000; // type-speed + wait time
+      });
+    }
 
     function scrollTranscriptToBottom() {
       transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
@@ -241,6 +267,7 @@ button:hover {
 
       recognition.start();
       isRecognizing = true;
+      simulateInterviewerFlow(); // ← starts scripted interviewer flow
     }
 
     stopBtn.addEventListener('click', () => {
