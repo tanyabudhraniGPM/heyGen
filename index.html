@@ -15,14 +15,12 @@
       align-items: center;
       min-height: 100vh;
     }
-
     header {
       padding: 30px 20px 10px;
       font-size: 32px;
       font-weight: bold;
       text-align: center;
     }
-
     #avatar-container {
       width: 90%;
       max-width: 800px;
@@ -32,7 +30,6 @@
       overflow: hidden;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     }
-
     #transcription-box {
       width: 95%;
       max-width: 900px;
@@ -40,18 +37,16 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
       padding: 16px;
-      margin: 20px auto 40px;
+      margin: 20px auto 10px;
       max-height: 160px;
       overflow-y: auto;
       box-sizing: border-box;
     }
-
     #transcription-box h3 {
       margin-top: 0;
       font-size: 20px;
       color: #a7d8ff;
     }
-
     #transcript {
       white-space: pre-wrap;
       font-size: 15px;
@@ -59,15 +54,12 @@
       max-height: 90px;
       overflow-y: auto;
     }
-
     .button-row {
-      margin-top: 0;
-      margin-bottom: 40px;
+      margin: 0 0 40px;
       display: flex;
       gap: 12px;
       justify-content: center;
     }
-    
     button {
       padding: 8px 16px;
       font-size: 14px;
@@ -78,69 +70,45 @@
       cursor: pointer;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
-
-button:hover {
-  background-color: #a7d8ff;
-  color: #0f2027;
-}
-
-
-    #stop-btn {
-      background-color: #ff4d4d;
-      color: white;
+    button:hover {
+      background-color: #a7d8ff;
+      color: #0f2027;
     }
-
-    #stop-btn:hover {
-      background-color: #e04545;
-    }
-
-    #download-btn {
-      background-color: #1e90ff;
-      color: white;
-    }
-
-    #download-btn:hover {
-      background-color: #197be5;
-    }
+    #stop-btn { background-color: #ff4d4d; color: white; }
+    #stop-btn:hover { background-color: #e04545; }
+    #download-btn { background-color: #1e90ff; color: white; }
+    #download-btn:hover { background-color: #197be5; }
+    #next-question-btn { background-color: #00b894; color: white; }
+    #next-question-btn:hover { background-color: #009f7d; }
 
     .chat-message {
       display: flex;
       margin-bottom: 10px;
       font-size: 14px;
     }
-  
-    .chat-message.interviewer {
-      justify-content: flex-start;
-    }
-  
-    .chat-message.interviewee {
-      justify-content: flex-end;
-    }
-  
+    .chat-message.interviewer { justify-content: flex-start; }
+    .chat-message.interviewee  { justify-content: flex-end; }
     .chat-bubble {
       max-width: 70%;
       padding: 10px 14px;
       border-radius: 12px;
-      background: #ffffff1a;
       color: #ffffff;
       backdrop-filter: blur(4px);
     }
-  
     .chat-message.interviewer .chat-bubble {
       background-color: #1e3d59;
       border-bottom-left-radius: 0;
     }
-  
     .chat-message.interviewee .chat-bubble {
       background-color: #2980b9;
       border-bottom-right-radius: 0;
     }
   </style>
+
+  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    (function(){
-      emailjs.init("19L6175qUmCquAyPd"); // Replace with your actual EmailJS public key
-    })();
+    emailjs.init("19L6175qUmCquAyPd"); // your EmailJS public key
   </script>
 </head>
 <body>
@@ -153,163 +121,147 @@ button:hover {
     <h3>Live Transcription</h3>
     <div id="transcript"></div>
   </div>
+
   <div class="button-row">
     <button id="stop-btn">Stop Transcription</button>
     <button id="download-btn">Download Transcript</button>
+    <button id="next-question-btn">Next Question</button>
   </div>
 
-
-  <!-- HeyGen Embed Script -->
+  <!-- HeyGen Embed -->
   <script>
-    (function(window) {
-      const host = "https://labs.heygen.com";
-      const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5NTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6ImRlN2ZiMGIxNWMzNzQyMGY5YTBjMTI2YzdkZGI1NDVjIiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
-
-      const container = document.getElementById("avatar-container");
-      const iframe = document.createElement("iframe");
-      iframe.src = url;
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      iframe.style.border = "none";
-      iframe.allow = "microphone";
-      iframe.allowFullscreen = false;
-      iframe.title = "HeyGen Avatar";
-
+    (function(window){
+      const host="https://labs.heygen.com",
+            url=host+"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5NTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6ImRlN2ZiMGIxNWMzNzQyMGY5YTBjMTI2YzdkZGI1NDVjIiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1",
+            container=document.getElementById("avatar-container");
+      const iframe=document.createElement("iframe");
+      iframe.src=url; iframe.style.width="100%"; iframe.style.height="100%";
+      iframe.style.border="none"; iframe.allow="microphone";
       container.appendChild(iframe);
     })(globalThis);
   </script>
 
-  <!-- Transcription Script -->
+  <!-- Transcription & Interview Logic -->
   <script>
-    const transcriptDiv = document.getElementById('transcript');
-    const stopBtn = document.getElementById('stop-btn');
-    const downloadBtn = document.getElementById('download-btn');
-    let recognition;
-    let isRecognizing = false;
-    let transcriptText = '';
+    const transcriptDiv       = document.getElementById('transcript'),
+          stopBtn             = document.getElementById('stop-btn'),
+          downloadBtn         = document.getElementById('download-btn'),
+          nextQuestionBtn     = document.getElementById('next-question-btn');
 
+    let recognition, isRecognizing=false, transcriptText='';
+
+    // Predefined interview prompts
+    const prompts = [
+      "Hi! I'm June, your friendly HR Avatar for the first round of interviews at Gateway Private Markets.",
+      "Let’s start with your background – can you briefly introduce yourself and your experience?",
+      "Thanks for sharing. Could you tell me about any internships you’ve completed and describe a specific project you worked on?",
+      "Great – can you go into more detail about that project? What were your responsibilities and what did you learn?",
+      "Which of those skills do you think are most transferrable to the type of work we do here at Gateway?",
+      "Now a logic question: Imagine a fund has an IRR of 20% but no distributions yet. What concerns might an investor have?",
+      "Let’s switch gears. What’s your understanding of Gateway’s business model and what we focus on?",
+      "From your perspective, what kind of digital or AI tools could help us improve or innovate further?",
+      "Here’s a private markets question: Can you explain the difference between direct secondaries and LP secondaries?",
+      "Just one math logic test: If you have a $100M fund and 25% has been deployed, how much remains and what’s your utilization rate?",
+      "Before we wrap up – is there anything specific you’d like to talk about, or any questions for me about Gateway?",
+      "Thanks for your time. The hiring team will review the interview and revert with any follow-up items."
+    ];
+    let currentPromptIndex = 0;
+
+    // Render a chat bubble
     function renderChatMessage(role, text) {
-      const messageWrapper = document.createElement("div");
-      messageWrapper.classList.add("chat-message", role);
-    
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("chat-message", role);
       const bubble = document.createElement("div");
       bubble.classList.add("chat-bubble");
       bubble.textContent = text;
-    
-      messageWrapper.appendChild(bubble);
-      transcriptDiv.appendChild(messageWrapper);
+      wrapper.appendChild(bubble);
+      transcriptDiv.appendChild(wrapper);
       scrollTranscriptToBottom();
-    }
-
-    function simulateInterviewerFlow() {
-      const prompts = [
-        "Hi! I'm June, your friendly HR Avatar for the first round of interviews at Gateway Private Markets.",
-        "Let’s start with your background – can you briefly introduce yourself and your experience?",
-        "Thanks for sharing. Could you tell me about any internships you’ve completed and describe a specific project you worked on?",
-        "Great – can you go into more detail about that project? What were your responsibilities and what did you learn?",
-        "Which of those skills do you think are most transferrable to the type of work we do here at Gateway?",
-        "Now a logic question: Imagine a fund has an IRR of 20% but no distributions yet. What concerns might an investor have?",
-        "Let’s switch gears. What’s your understanding of Gateway’s business model and what we focus on?",
-        "From your perspective, what kind of digital or AI tools could help us improve or innovate further?",
-        "Here’s a private markets question: Can you explain the difference between direct secondaries and LP secondaries?",
-        "Just one math logic test: If you have a $100M fund and 25% has been deployed, how much remains and what’s your utilization rate?",
-        "Before we wrap up – is there anything specific you’d like to talk about, or any questions for me about Gateway?",
-        "Thanks for your time. The hiring team will review the interview and revert with any follow-up items."
-      ];
-    
-      let delay = 1000;
-    
-      prompts.forEach((line, index) => {
-        setTimeout(() => {
-          renderChatMessage("interviewer", line);
-          transcriptText += "Interviewer: " + line + '\n';
-        }, delay);
-        delay += (line.length * 50) + 4000; // type-speed + wait time
-      });
     }
 
     function scrollTranscriptToBottom() {
       transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
     }
 
+    // Start speech recognition
     function startRecognition() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
-      recognition.onresult = (event) => {
+      recognition.onresult = event => {
         let interim = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
-          if (result.isFinal) {
-            const userText = result[0].transcript;
-            transcriptText += "Interviewee: " + userText + '\n';
-            renderChatMessage("interviewee", userText);
+          const res = event.results[i];
+          if (res.isFinal) {
+            const txt = res[0].transcript.trim();
+            transcriptText += `Interviewee: ${txt}\n`;
+            renderChatMessage("interviewee", txt);
           } else {
-            interim += result[0].transcript;
+            interim += res[0].transcript;
           }
         }
         scrollTranscriptToBottom();
       };
 
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        transcriptDiv.textContent = 'Error: ' + event.error;
+      recognition.onerror = e => {
+        console.error("Speech error:", e.error);
       };
 
       recognition.onend = () => {
-        if (isRecognizing) {
-          recognition.start(); // Auto-restart
-        }
+        if (isRecognizing) recognition.start();
       };
 
+      transcriptDiv.innerHTML = '';        // clear any placeholder
       recognition.start();
       isRecognizing = true;
-      simulateInterviewerFlow(); // ← starts scripted interviewer flow
     }
 
-    stopBtn.addEventListener('click', () => {
-      if (recognition && isRecognizing) {
-        recognition.stop();
-        isRecognizing = false;
-        renderChatMessage("interviewer", "[Transcription stopped]");
-        transcriptText += "Interviewer: [Transcription stopped]\n";
-
-    
-        // Send transcript via EmailJS
-        emailjs.send("service_b5xqy6q", "template_gay22ga", {
-          transcript: transcriptText
-        }).then(() => {
-          alert("Transcript emailed successfully!");
-        }, (error) => {
-          console.error("EmailJS error:", error);
-          alert("Failed to send email: " + JSON.stringify(error));
-        });
+    // Next Question button
+    nextQuestionBtn.addEventListener('click', () => {
+      if (currentPromptIndex < prompts.length) {
+        const q = prompts[currentPromptIndex++];
+        transcriptText += `Interviewer: ${q}\n`;
+        renderChatMessage("interviewer", q);
+      } else {
+        nextQuestionBtn.disabled = true;
+        renderChatMessage("interviewer", "[No more questions]");
       }
     });
 
+    // Stop & Email
+    stopBtn.addEventListener('click', () => {
+      if (recognition && isRecognizing) {
+        recognition.stop(); isRecognizing = false;
+        renderChatMessage("interviewer", "[Transcription stopped]");
+        transcriptText += "Interviewer: [Transcription stopped]\n";
+        emailjs.send("service_b5xqy6q","template_gay22ga",{ transcript: transcriptText })
+          .then(()=> alert("Transcript emailed!"))
+          .catch(e=> alert("Email failed: "+e));
+      }
+    });
 
+    // Download
     downloadBtn.addEventListener('click', () => {
-      const blob = new Blob([transcriptText], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'transcript.txt';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const blob = new Blob([transcriptText], { type:'text/plain' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url; a.download = 'transcript.txt';
+      document.body.appendChild(a);
+      a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
 
-    // Auto-start if supported
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    // Auto-start on page load
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       startRecognition();
     } else {
-      transcriptDiv.textContent = 'Speech Recognition is not supported in this browser.';
+      renderChatMessage("interviewer","Speech recognition not supported in this browser.");
       stopBtn.disabled = true;
       downloadBtn.disabled = true;
+      nextQuestionBtn.disabled = true;
     }
   </script>
 
