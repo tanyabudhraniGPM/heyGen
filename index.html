@@ -141,7 +141,7 @@
     })(globalThis);
   </script>
 
-  <!-- Transcription & Interview Logic -->
+  <!-- Transcription & VAD Logic -->
   <script>
     const transcriptDiv       = document.getElementById('transcript'),
           stopBtn             = document.getElementById('stop-btn'),
@@ -149,8 +149,12 @@
           nextQuestionBtn     = document.getElementById('next-question-btn');
 
     let recognition, isRecognizing=false, transcriptText='';
+    let audioContext, analyser, microphone, javascriptNode;
+    let vadStarted = false;
+    let silenceTimeout = null;
+    const silenceThreshold = 0.01; // Adjust for sensitivity
+    const silenceDelayMs = 2000;   // 2 seconds silence detection
 
-    // Predefined interview prompts
     const prompts = [
       "Hi! I'm June, your friendly HR Avatar for the first round of interviews at Gateway Private Markets.",
       "Let’s start with your background – can you briefly introduce yourself and your experience?",
@@ -167,7 +171,6 @@
     ];
     let currentPromptIndex = 0;
 
-    // Render a chat bubble
     function renderChatMessage(role, text) {
       const wrapper = document.createElement("div");
       wrapper.classList.add("chat-message", role);
@@ -183,7 +186,6 @@
       transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
     }
 
-    // Start speech recognition
     function startRecognition() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognition = new SR();
@@ -192,15 +194,12 @@
       recognition.lang = 'en-US';
 
       recognition.onresult = event => {
-        let interim = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const res = event.results[i];
           if (res.isFinal) {
             const txt = res[0].transcript.trim();
             transcriptText += `Interviewee: ${txt}\n`;
             renderChatMessage("interviewee", txt);
-          } else {
-            interim += res[0].transcript;
           }
         }
         scrollTranscriptToBottom();
@@ -214,24 +213,71 @@
         if (isRecognizing) recognition.start();
       };
 
-      transcriptDiv.innerHTML = '';        // clear any placeholder
       recognition.start();
       isRecognizing = true;
     }
 
-    // Next Question button
-    nextQuestionBtn.addEventListener('click', () => {
+    async function setupVAD() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      microphone = audioContext.createMediaStreamSource(stream);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 512;
+      microphone.connect(analyser);
+
+      javascriptNode = audioContext.createScriptProcessor(512, 1, 1);
+      analyser.connect(javascriptNode);
+      javascriptNode.connect(audioContext.destination);
+
+      javascriptNode.onaudioprocess = function() {
+        const array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        const average = array.reduce((a, b) => a + b, 0) / array.length;
+
+        if (average / 255 > silenceThreshold) {
+          if (!vadStarted) {
+            console.log("Voice detected. Starting recognition...");
+            startRecognition();
+            vadStarted = true;
+          }
+          clearTimeout(silenceTimeout);
+        } else {
+          if (vadStarted) {
+            clearTimeout(silenceTimeout);
+            silenceTimeout = setTimeout(() => {
+              console.log("Silence detected. Stopping recognition...");
+              if (recognition && isRecognizing) {
+                recognition.stop();
+                isRecognizing = false;
+              }
+              vadStarted = false;
+            }, silenceDelayMs);
+          }
+        }
+      };
+    }
+
+    nextQuestionBtn.addEventListener('click', async () => {
+      if (recognition && isRecognizing) {
+        recognition.stop();
+        isRecognizing = false;
+      }
+
       if (currentPromptIndex < prompts.length) {
         const q = prompts[currentPromptIndex++];
         transcriptText += `Interviewer: ${q}\n`;
         renderChatMessage("interviewer", q);
+
+        setTimeout(async () => {
+          console.log("Starting VAD setup...");
+          await setupVAD();
+        }, 3000);
       } else {
         nextQuestionBtn.disabled = true;
         renderChatMessage("interviewer", "[No more questions]");
       }
     });
 
-    // Stop & Email
     stopBtn.addEventListener('click', () => {
       if (recognition && isRecognizing) {
         recognition.stop(); isRecognizing = false;
@@ -243,7 +289,6 @@
       }
     });
 
-    // Download
     downloadBtn.addEventListener('click', () => {
       const blob = new Blob([transcriptText], { type:'text/plain' });
       const url  = URL.createObjectURL(blob);
@@ -253,16 +298,6 @@
       a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
-
-    // Auto-start on page load
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      startRecognition();
-    } else {
-      renderChatMessage("interviewer","Speech recognition not supported in this browser.");
-      stopBtn.disabled = true;
-      downloadBtn.disabled = true;
-      nextQuestionBtn.disabled = true;
-    }
   </script>
 
 </body>
