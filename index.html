@@ -78,8 +78,6 @@
     #stop-btn:hover { background-color: #e04545; }
     #download-btn { background-color: #1e90ff; color: white; }
     #download-btn:hover { background-color: #197be5; }
-    #next-question-btn { background-color: #00b894; color: white; }
-    #next-question-btn:hover { background-color: #009f7d; }
 
     .chat-message {
       display: flex;
@@ -125,7 +123,6 @@
   <div class="button-row">
     <button id="stop-btn">Stop Transcription</button>
     <button id="download-btn">Download Transcript</button>
-    <button id="next-question-btn">Next Question</button>
   </div>
 
   <!-- HeyGen Embed -->
@@ -143,33 +140,16 @@
 
   <!-- Transcription & VAD Logic -->
   <script>
-    const transcriptDiv       = document.getElementById('transcript'),
-          stopBtn             = document.getElementById('stop-btn'),
-          downloadBtn         = document.getElementById('download-btn'),
-          nextQuestionBtn     = document.getElementById('next-question-btn');
+    const transcriptDiv = document.getElementById('transcript');
+    const stopBtn = document.getElementById('stop-btn');
+    const downloadBtn = document.getElementById('download-btn');
 
-    let recognition, isRecognizing=false, transcriptText='';
+    let recognition, isRecognizing = false, transcriptText = '';
     let audioContext, analyser, microphone, javascriptNode;
     let vadStarted = false;
     let silenceTimeout = null;
-    const silenceThreshold = 0.01; // Adjust for sensitivity
-    const silenceDelayMs = 2000;   // 2 seconds silence detection
-
-    const prompts = [
-      "Hi! I'm June, your friendly HR Avatar for the first round of interviews at Gateway Private Markets.",
-      "Let’s start with your background – can you briefly introduce yourself and your experience?",
-      "Thanks for sharing. Could you tell me about any internships you’ve completed and describe a specific project you worked on?",
-      "Great – can you go into more detail about that project? What were your responsibilities and what did you learn?",
-      "Which of those skills do you think are most transferrable to the type of work we do here at Gateway?",
-      "Now a logic question: Imagine a fund has an IRR of 20% but no distributions yet. What concerns might an investor have?",
-      "Let’s switch gears. What’s your understanding of Gateway’s business model and what we focus on?",
-      "From your perspective, what kind of digital or AI tools could help us improve or innovate further?",
-      "Here’s a private markets question: Can you explain the difference between direct secondaries and LP secondaries?",
-      "Just one math logic test: If you have a $100M fund and 25% has been deployed, how much remains and what’s your utilization rate?",
-      "Before we wrap up – is there anything specific you’d like to talk about, or any questions for me about Gateway?",
-      "Thanks for your time. The hiring team will review the interview and revert with any follow-up items."
-    ];
-    let currentPromptIndex = 0;
+    const silenceThreshold = 0.01;
+    const silenceDelayMs = 2000;
 
     function renderChatMessage(role, text) {
       const wrapper = document.createElement("div");
@@ -179,10 +159,6 @@
       bubble.textContent = text;
       wrapper.appendChild(bubble);
       transcriptDiv.appendChild(wrapper);
-      scrollTranscriptToBottom();
-    }
-
-    function scrollTranscriptToBottom() {
       transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
     }
 
@@ -202,7 +178,6 @@
             renderChatMessage("interviewee", txt);
           }
         }
-        scrollTranscriptToBottom();
       };
 
       recognition.onerror = e => {
@@ -219,7 +194,7 @@
 
     async function setupVAD() {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       microphone = audioContext.createMediaStreamSource(stream);
       analyser = audioContext.createAnalyser();
       analyser.fftSize = 512;
@@ -257,43 +232,28 @@
       };
     }
 
-    nextQuestionBtn.addEventListener('click', async () => {
-      if (recognition && isRecognizing) {
-        recognition.stop();
-        isRecognizing = false;
-      }
-
-      if (currentPromptIndex < prompts.length) {
-        const q = prompts[currentPromptIndex++];
-        transcriptText += `Interviewer: ${q}\n`;
-        renderChatMessage("interviewer", q);
-
-        setTimeout(async () => {
-          console.log("Starting VAD setup...");
-          await setupVAD();
-        }, 3000);
-      } else {
-        nextQuestionBtn.disabled = true;
-        renderChatMessage("interviewer", "[No more questions]");
-      }
+    // Setup VAD automatically after slight delay (e.g. avatar intro)
+    window.addEventListener('load', () => {
+      setTimeout(setupVAD, 3000); // 3s buffer for avatar greeting
     });
 
     stopBtn.addEventListener('click', () => {
       if (recognition && isRecognizing) {
-        recognition.stop(); isRecognizing = false;
+        recognition.stop();
+        isRecognizing = false;
         renderChatMessage("interviewer", "[Transcription stopped]");
         transcriptText += "Interviewer: [Transcription stopped]\n";
-        emailjs.send("service_b5xqy6q","template_gay22ga",{ transcript: transcriptText })
-          .then(()=> alert("Transcript emailed!"))
-          .catch(e=> alert("Email failed: "+e));
+        emailjs.send("service_b5xqy6q", "template_gay22ga", { transcript: transcriptText })
+          .then(() => alert("Transcript emailed!"))
+          .catch(e => alert("Email failed: " + e));
       }
     });
 
     downloadBtn.addEventListener('click', () => {
-      const blob = new Blob([transcriptText], { type:'text/plain' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url; a.download = 'transcript.txt';
+      const blob = new Blob([transcriptText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'transcript.txt';
       document.body.appendChild(a);
       a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
