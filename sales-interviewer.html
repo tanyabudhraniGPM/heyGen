@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gateway Private Market – Sales Interview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("19L6175qUmCquAyPd"); // Your public EmailJS key
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #333333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1 0 auto;
+    }
+
+    footer {
+      flex-shrink: 0;
+    }
+
+    header {
+      padding: 30px 20px 10px;
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #avatar-container {
+      width: 90%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      margin-bottom: 30px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    #transcription-box {
+      width: 95%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px auto 10px;
+      max-height: 160px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    #transcription-box h3 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #a7d8ff;
+    }
+
+    #transcript {
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.4;
+      max-height: 90px;
+      overflow-y: auto;
+    }
+
+    .button-row {
+      margin: 0 0 40px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: auto;
+      max-width: 100%;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: 1px solid #a7d8ff;
+      background-color: transparent;
+      color: #a7d8ff;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #a7d8ff;
+      color: #0f2027;
+    }
+
+    #stop-btn {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    #stop-btn:hover {
+      background-color: #e04545;
+    }
+
+    #download-btn {
+      background-color: #1e90ff;
+      color: white;
+    }
+
+    #download-btn:hover {
+      background-color: #197be5;
+    }
+
+    .chat-message {
+      display: flex;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .chat-message.interviewer { justify-content: flex-start; }
+    .chat-message.interviewee  { justify-content: flex-end; }
+
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+
+    .chat-message.interviewer .chat-bubble {
+      background-color: #1e3d59;
+      border-bottom-left-radius: 0;
+    }
+
+    .chat-message.interviewee .chat-bubble {
+      background-color: #2980b9;
+      border-bottom-right-radius: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<main style="flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; min-height: 90vh; padding-bottom: 80px;">
+  <div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1200px; margin: auto;">
+      <!-- LEFT COLUMN -->
+      <div style="flex: 1 1 300px; max-width: 340px; background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: #333;">
+        <h3 style="margin-top: 0; font-size: 20px; font-weight: bold;">Getting Started</h3>
+        <ul style="padding-left: 20px; font-size: 15px; line-height: 1.6; margin-bottom: 0;">
+          <li>When you're ready, click <strong>"Chat now"</strong> to start your interview with <strong>Sophia</strong>, Gateway's virtual interviewer.</li>
+          <li>Start the interview by saying <strong>"Hi my name is ..."</strong></li>
+          <li>Answer the questions to the best of your ability.</li>
+          <li>When you're done, click <strong>"End chat"</strong>.</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="flex: 2 1 500px; min-width: 320px;">
+        <header style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 24px;">Gateway Private Market - Sales Interview</header>
+        <div id="avatar-container" style="width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); margin-bottom: 24px;"></div>
+
+        <div id="transcription-box">
+          <h3>Live Transcription</h3>
+          <div id="transcript"></div>
+        </div>
+
+        <div class="button-row">
+          <button id="stop-btn">End Chat</button>
+          <button id="download-btn">Download Transcript</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(window) {
+  const host = "https://labs.heygen.com";
+  const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5NTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6ImRlN2ZiMGIxNWMzNzQyMGY5YTBjMTI2YzdkZGI1NDVjIiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
+  const container = document.getElementById("avatar-container");
+  const iframe = document.createElement("iframe");
+
+  iframe.src = url;
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
+  iframe.allow = "microphone";
+
+  container.appendChild(iframe);
+})(globalThis);
+
+const transcriptDiv = document.getElementById('transcript');
+const stopBtn = document.getElementById('stop-btn');
+const downloadBtn = document.getElementById('download-btn');
+
+let recognition, isRecognizing = false, transcriptText = '';
+let audioContext, analyser, microphone, javascriptNode;
+let vadStarted = false;
+let silenceTimeout = null;
+const silenceThreshold = 0.01;
+const silenceDelayMs = 2000;
+
+function renderChatMessage(role, text) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("chat-message", role);
+  const bubble = document.createElement("div");
+  bubble.classList.add("chat-bubble");
+  bubble.textContent = text;
+  wrapper.appendChild(bubble);
+  transcriptDiv.appendChild(wrapper);
+  transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
+}
+
+function startRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = event => {
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const res = event.results[i];
+      if (res.isFinal) {
+        const txt = res[0].transcript.trim();
+        transcriptText += `Interviewee: ${txt}\n`;
+        renderChatMessage("interviewee", txt);
+      }
+    }
+  };
+
+  recognition.onerror = e => {
+    console.error("Speech recognition error:", e.error);
+  };
+
+  recognition.onend = () => {
+    if (isRecognizing) recognition.start();
+  };
+
+  recognition.start();
+  isRecognizing = true;
+}
+
+async function setupVAD() {
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  microphone = audioContext.createMediaStreamSource(stream);
+  analyser = audioContext.createAnalyser();
+  analyser.fftSize = 512;
+  microphone.connect(analyser);
+
+  javascriptNode = audioContext.createScriptProcessor(512, 1, 1);
+  analyser.connect(javascriptNode);
+  javascriptNode.connect(audioContext.destination);
+
+  javascriptNode.onaudioprocess = function() {
+    const array = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(array);
+    const average = array.reduce((a, b) => a + b, 0) / array.length;
+
+    if (average / 255 > silenceThreshold) {
+      if (!vadStarted) {
+        console.log("Voice detected. Starting recognition...");
+        startRecognition();
+        vadStarted = true;
+      }
+      clearTimeout(silenceTimeout);
+    } else {
+      if (vadStarted) {
+        clearTimeout(silenceTimeout);
+        silenceTimeout = setTimeout(() => {
+          console.log("Silence detected. Stopping recognition...");
+          if (recognition && isRecognizing) {
+            recognition.stop();
+            isRecognizing = false;
+          }
+          vadStarted = false;
+        }, silenceDelayMs);
+      }
+    }
+  };
+}
+
+window.addEventListener('load', () => {
+  setTimeout(setupVAD, 3000);
+});
+
+stopBtn.addEventListener('click', () => {
+  if (recognition && isRecognizing) {
+    recognition.stop();
+    isRecognizing = false;
+    renderChatMessage("interviewer", "[Transcription stopped]");
+    transcriptText += "Interviewer: [Transcription stopped]\n";
+
+    emailjs.send("service_b5xqy6q", "template_gay22ga", {
+      transcript: transcriptText
+    })
+    .then(() => alert("Transcript emailed successfully!"))
+    .catch(e => alert("Failed to send email: " + e));
+  }
+});
+
+downloadBtn.addEventListener('click', () => {
+  const blob = new Blob([transcriptText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'transcript.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+</script>
+
+</body>
+</html>
