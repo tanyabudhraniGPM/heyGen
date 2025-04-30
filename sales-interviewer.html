@@ -8,7 +8,7 @@
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("19L6175qUmCquAyPd"); // Your public EmailJS key
+    emailjs.init("19L6175qUmCquAyPd");
   </script>
 
   <style>
@@ -21,7 +21,7 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f5f5;
-      color: #333333;
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -54,30 +54,33 @@
     }
 
     #transcription-box {
-      width: 95%;
-      max-width: 900px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       padding: 16px;
-      margin: 20px auto 10px;
-      max-height: 160px;
-      overflow-y: auto;
-      box-sizing: border-box;
+      margin-top: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
 
     #transcription-box h3 {
       margin-top: 0;
-      font-size: 20px;
-      color: #a7d8ff;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1e90ff;
+      margin-bottom: 8px;
     }
 
     #transcript {
       white-space: pre-wrap;
       font-size: 15px;
-      line-height: 1.4;
-      max-height: 90px;
+      line-height: 1.5;
+      max-height: 140px;
       overflow-y: auto;
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
     }
 
     .button-row {
@@ -93,17 +96,10 @@
     button {
       padding: 8px 16px;
       font-size: 14px;
-      border: 1px solid #a7d8ff;
-      background-color: transparent;
-      color: #a7d8ff;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    button:hover {
-      background-color: #a7d8ff;
-      color: #0f2027;
     }
 
     #stop-btn {
@@ -158,8 +154,12 @@
 <main style="flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; min-height: 90vh; padding-bottom: 80px;">
   <div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
     <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1200px; margin: auto;">
+
       <!-- LEFT COLUMN -->
       <div style="flex: 1 1 300px; max-width: 340px; background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: #333;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="image.png" alt="Gateway Logo" style="max-width: 100px;" />
+        </div>
         <h3 style="margin-top: 0; font-size: 20px; font-weight: bold;">Getting Started</h3>
         <ul style="padding-left: 20px; font-size: 15px; line-height: 1.6; margin-bottom: 0;">
           <li>When you're ready, click <strong>"Chat now"</strong> to start your interview with <strong>Sophia</strong>, Gateway's virtual interviewer.</li>
@@ -172,7 +172,7 @@
       <!-- RIGHT COLUMN -->
       <div style="flex: 2 1 500px; min-width: 320px;">
         <header style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 24px;">Gateway Private Market - Sales Interview</header>
-        <div id="avatar-container" style="width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); margin-bottom: 24px;"></div>
+        <div id="avatar-container"></div>
 
         <div id="transcription-box">
           <h3>Live Transcription</h3>
@@ -244,14 +244,8 @@ function startRecognition() {
     }
   };
 
-  recognition.onerror = e => {
-    console.error("Speech recognition error:", e.error);
-  };
-
-  recognition.onend = () => {
-    if (isRecognizing) recognition.start();
-  };
-
+  recognition.onerror = e => console.error("Speech recognition error:", e.error);
+  recognition.onend = () => { if (isRecognizing) recognition.start(); };
   recognition.start();
   isRecognizing = true;
 }
@@ -306,12 +300,9 @@ stopBtn.addEventListener('click', () => {
     isRecognizing = false;
     renderChatMessage("interviewer", "[Transcription stopped]");
     transcriptText += "Interviewer: [Transcription stopped]\n";
-
-    emailjs.send("service_b5xqy6q", "template_gay22ga", {
-      transcript: transcriptText
-    })
-    .then(() => alert("Transcript emailed successfully!"))
-    .catch(e => alert("Failed to send email: " + e));
+    emailjs.send("service_b5xqy6q", "template_gay22ga", { transcript: transcriptText })
+      .then(() => alert("Transcript emailed successfully!"))
+      .catch(e => alert("Failed to send email: " + e));
   }
 });
 
