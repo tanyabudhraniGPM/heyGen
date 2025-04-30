@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Gateway Private Market – Sales Interview</title>
+  <title>Gateway Private Market – Tech Interview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("19L6175qUmCquAyPd");
+    emailjs.init("Qkc5-K6DwdGulUCRT");
   </script>
 
   <style>
@@ -288,7 +288,7 @@ stopBtn.addEventListener('click', () => {
     isRecognizing = false;
     renderChatMessage("interviewer", "[Transcription stopped]");
     transcriptText += "Interviewer: [Transcription stopped]\n";
-    emailjs.send("service_b5xqy6q", "template_gay22ga", { transcript: transcriptText })
+    emailjs.send("service_pt6xbks", "template_ubqh7du", { transcript: transcriptText })
       .then(() => alert("Transcript emailed successfully!"))
       .catch(e => alert("Failed to send email: " + e));
   }
