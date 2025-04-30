@@ -84,13 +84,11 @@
     }
 
     .button-row {
-      margin: 0 0 40px;
+      margin-top: 16px;
       display: flex;
       gap: 12px;
-      justify-content: center;
+      justify-content: flex-start;
       flex-wrap: wrap;
-      width: auto;
-      max-width: 100%;
     }
 
     button {
@@ -177,11 +175,10 @@
         <div id="transcription-box">
           <h3>Live Transcription</h3>
           <div id="transcript"></div>
-        </div>
-
-        <div class="button-row">
-          <button id="stop-btn">End Chat</button>
-          <button id="download-btn">Download Transcript</button>
+          <div class="button-row">
+            <button id="stop-btn">End Chat</button>
+            <button id="download-btn">Download Transcript</button>
+          </div>
         </div>
       </div>
     </div>
@@ -194,13 +191,11 @@
   const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5NTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6ImRlN2ZiMGIxNWMzNzQyMGY5YTBjMTI2YzdkZGI1NDVjIiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
   const container = document.getElementById("avatar-container");
   const iframe = document.createElement("iframe");
-
   iframe.src = url;
   iframe.style.width = "100%";
   iframe.style.height = "100%";
   iframe.style.border = "none";
   iframe.allow = "microphone";
-
   container.appendChild(iframe);
 })(globalThis);
 
@@ -232,7 +227,6 @@ function startRecognition() {
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.lang = 'en-US';
-
   recognition.onresult = event => {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const res = event.results[i];
@@ -243,7 +237,6 @@ function startRecognition() {
       }
     }
   };
-
   recognition.onerror = e => console.error("Speech recognition error:", e.error);
   recognition.onend = () => { if (isRecognizing) recognition.start(); };
   recognition.start();
@@ -257,19 +250,15 @@ async function setupVAD() {
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 512;
   microphone.connect(analyser);
-
   javascriptNode = audioContext.createScriptProcessor(512, 1, 1);
   analyser.connect(javascriptNode);
   javascriptNode.connect(audioContext.destination);
-
   javascriptNode.onaudioprocess = function() {
     const array = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(array);
     const average = array.reduce((a, b) => a + b, 0) / array.length;
-
     if (average / 255 > silenceThreshold) {
       if (!vadStarted) {
-        console.log("Voice detected. Starting recognition...");
         startRecognition();
         vadStarted = true;
       }
@@ -278,7 +267,6 @@ async function setupVAD() {
       if (vadStarted) {
         clearTimeout(silenceTimeout);
         silenceTimeout = setTimeout(() => {
-          console.log("Silence detected. Stopping recognition...");
           if (recognition && isRecognizing) {
             recognition.stop();
             isRecognizing = false;
