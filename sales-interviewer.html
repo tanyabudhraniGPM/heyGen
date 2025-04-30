@@ -288,7 +288,7 @@ stopBtn.addEventListener('click', () => {
     isRecognizing = false;
     renderChatMessage("interviewer", "[Transcription stopped]");
     transcriptText += "Interviewer: [Transcription stopped]\n";
-    emailjs.send("service_scdmij1", "template_ubqh7du", { transcript: transcriptText })
+    emailjs.send("service_pt6xbks", "template_ubqh7du", { transcript: transcriptText })
       .then(() => alert("Transcript emailed successfully!"))
       .catch(e => alert("Failed to send email: " + e));
   }
