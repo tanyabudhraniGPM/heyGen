@@ -279,7 +279,8 @@ async function setupVAD() {
 }
 
 window.addEventListener('load', () => {
-  setTimeout(setupVAD, 3000);
+  setupVAD();
+  startRecognition(); // ← Start directly
 });
 
 stopBtn.addEventListener('click', () => {
