@@ -170,6 +170,7 @@
       <!-- RIGHT COLUMN -->
       <div style="flex: 2 1 500px; min-width: 320px;">
         <header style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 24px;">Gateway Private Market - Sales Interview</header>
+        <button onclick="startStreaming()" style="margin-bottom: 16px;">Start Interview</button> 
         <div id="avatar-container"></div>
 
         <div id="transcription-box">
@@ -186,18 +187,18 @@
 </main>
 
 <script>
-(function(window) {
-  const host = "https://labs.heygen.com";
-  const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJ%0D%0AbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5%0D%0ANTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFj%0D%0Aa2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjM0ZDg2NDM0MTdhMDQ3NzE4MzUyNGJi%0D%0ANjdlYzg5ZTY3IiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
-  const container = document.getElementById("avatar-container");
-  const iframe = document.createElement("iframe");
-  iframe.src = url;
-  iframe.style.width = "100%";
-  iframe.style.height = "100%";
-  iframe.style.border = "none";
-  iframe.allow = "microphone";
-  container.appendChild(iframe);
-})(globalThis);
+// (function(window) {
+//   const host = "https://labs.heygen.com";
+//   const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJ%0D%0AbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5%0D%0ANTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFj%0D%0Aa2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjM0ZDg2NDM0MTdhMDQ3NzE4MzUyNGJi%0D%0ANjdlYzg5ZTY3IiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
+//   const container = document.getElementById("avatar-container");
+//   const iframe = document.createElement("iframe");
+//   iframe.src = url;
+//   iframe.style.width = "100%";
+//   iframe.style.height = "100%";
+//   iframe.style.border = "none";
+//   iframe.allow = "microphone";
+//   container.appendChild(iframe);
+// })(globalThis);
 
 const transcriptDiv = document.getElementById('transcript');
 const stopBtn = document.getElementById('stop-btn');
@@ -305,6 +306,44 @@ downloadBtn.addEventListener('click', () => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
+
+async function startStreaming() {
+  const transcript = document.getElementById('transcript');
+  transcript.textContent += "Connecting to Sophia...\n";
+
+  const res = await fetch('http://localhost:3001/start-session'); // Backend endpoint
+  const { room_url, access_token, session_id } = await res.json();
+
+  const ws = new WebSocket(room_url);
+
+  ws.onopen = () => {
+    console.log('WebSocket open');
+    sendGreeting(session_id);
+  };
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    if (msg.type === 'avatar_response') {
+      transcript.textContent += `Sophia: ${msg.text}\n`;
+      renderChatMessage("interviewer", msg.text);
+    }
+  };
+
+  async function sendGreeting(sessionId) {
+    await fetch('https://api.heygen.com/v1/streaming.task', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer NDliZDIzNTAzYjBkNGQ1Mzk2OTI2ZmNjYzExZWViMDUtMTc0MjczODgzOA==', // REPLACE this
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        task_type: 'say',
+        text: "Hi there! I'm Sophia. What's your name?"
+      })
+    });
+  }
+}
 </script>
 
 </body>
