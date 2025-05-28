@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <title>Gateway Private Market – Tech Interview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  let audioChunks = [];
+  let mediaRecorder;
+  let audioBlob = null;
 
-  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     emailjs.init("Qkc5-K6DwdGulUCRT");
@@ -246,6 +249,17 @@ function startRecognition() {
 async function setupVAD() {
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  // 🔴 Start audio recording
+  mediaRecorder = new MediaRecorder(stream);
+  mediaRecorder.start();
+  audioChunks = [];
+  mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+  mediaRecorder.onstop = () => {
+    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    console.log("🎧 Audio recording complete.");
+  };
+
   microphone = audioContext.createMediaStreamSource(stream);
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 512;
@@ -278,6 +292,7 @@ async function setupVAD() {
   };
 }
 
+
 window.addEventListener('load', () => {
   setupVAD();
   startRecognition(); // ← Start directly
@@ -293,6 +308,21 @@ stopBtn.addEventListener('click', () => {
       .then(() => alert("Transcript emailed successfully!"))
       .catch(e => alert("Failed to send email: " + e));
   }
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+  mediaRecorder.stop();
+  setTimeout(() => {
+    if (audioBlob) {
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const a = document.createElement('a');
+      a.href = audioUrl;
+      a.download = 'interview-audio.webm';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(audioUrl);
+    }
+  }, 1000); // Give it time to finalize
+}
 });
 
 downloadBtn.addEventListener('click', () => {
