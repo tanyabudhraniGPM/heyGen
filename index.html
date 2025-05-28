@@ -119,23 +119,30 @@
       const name = document.getElementById('name').value.trim();
       const code = document.getElementById('code').value.trim();
       const type = document.getElementById('type').value;
-
+    
       if (!name || !code || !type) {
         alert('Please fill in all fields.');
         return;
       }
-
-      if (code !== 'Gpm1234') {
-        alert('Invalid access code. Please try again.');
+    
+      const validCode = "Gpm1234";
+      if (code.toLowerCase() !== validCode.toLowerCase()) {
+        alert('❌ Invalid access code. Please try again.');
         return;
       }
-
+    
+      // Optional: Save to sessionStorage
+      sessionStorage.setItem("candidateName", name);
+      sessionStorage.setItem("interviewType", type);
+    
+      // Redirect to the appropriate page
       if (type === 'tech') {
         window.location.href = "tech-interviewer.html";
       } else if (type === 'sales') {
         window.location.href = "sales-interviewer.html";
       }
     }
+
   </script>
 </body>
 </html>
