@@ -5,14 +5,10 @@
   <title>Gateway Private Market – Tech Interview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     emailjs.init("Qkc5-K6DwdGulUCRT");
-  </script>
-  <script>
-    let audioChunks = [];
-    let mediaRecorder;
-    let audioBlob = null;
   </script>
 
   <style>
@@ -34,10 +30,6 @@
 
     main {
       flex: 1 0 auto;
-    }
-
-    footer {
-      flex-shrink: 0;
     }
 
     header {
@@ -154,35 +146,32 @@
 <body>
 
 <main style="flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; min-height: 90vh; padding-bottom: 80px;">
-  <div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
-    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1200px; margin: auto;">
-
-      <!-- LEFT COLUMN -->
-      <div style="flex: 1 1 300px; max-width: 340px; background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: #333;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <img src="image.png" alt="Gateway Logo" style="max-width: 100px;" />
-        </div>
-        <h3 style="margin-top: 0; font-size: 20px; font-weight: bold;">Getting Started</h3>
-        <ul style="padding-left: 20px; font-size: 15px; line-height: 1.6; margin-bottom: 0;">
-          <li>When you're ready, click <strong>"Chat now"</strong> to start your interview with <strong>Sophia</strong>, Gateway's virtual interviewer.</li>
-          <li>Start the interview by saying <strong>"Hi my name is ..."</strong></li>
-          <li>Answer the questions to the best of your ability.</li>
-          <li>When you're done, click <strong>"End Interview"</strong>, and your interview will be sent automatically to the team</li>
-        </ul>
+  <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 1200px; margin: auto;">
+    <!-- LEFT -->
+    <div style="flex: 1 1 300px; max-width: 340px; background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="image.png" alt="Gateway Logo" style="max-width: 100px;" />
       </div>
+      <h3 style="margin-top: 0;">Getting Started</h3>
+      <ul style="padding-left: 20px; font-size: 15px;">
+        <li>Click <strong>"Chat now"</strong> to start.</li>
+        <li>Say <strong>"Hi, my name is ..."</strong></li>
+        <li>Answer clearly and confidently.</li>
+        <li>Click <strong>"End Interview"</strong> when done.</li>
+      </ul>
+    </div>
 
-      <!-- RIGHT COLUMN -->
-      <div style="flex: 2 1 500px; min-width: 320px;">
-        <header style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 24px;">Gateway Private Market - Tech Interview</header>
-        <div id="avatar-container"></div>
+    <!-- RIGHT -->
+    <div style="flex: 2 1 500px;">
+      <header>Gateway Private Market – Tech Interview</header>
+      <div id="avatar-container"></div>
 
-        <div id="transcription-box">
-          <h3>Live Transcription</h3>
-          <div id="transcript"></div>
-          <div class="button-row">
-            <button id="stop-btn">End Interview</button>
-            <button id="download-btn">Download Transcript</button>
-          </div>
+      <div id="transcription-box">
+        <h3>Live Transcription</h3>
+        <div id="transcript"></div>
+        <div class="button-row">
+          <button id="stop-btn">End Interview</button>
+          <button id="download-btn">Download Transcript</button>
         </div>
       </div>
     </div>
@@ -190,18 +179,9 @@
 </main>
 
 <script>
-(function(window) {
-  const host = "https://labs.heygen.com";
-  const url = host + "/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJKdW5lX0hSX3B1YmxpYyIsInByZXZpZXdJ%0D%0AbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzc0NDQ3YTI3ODU5YTQ1NmM5%0D%0ANTVlMDFmMjFlZjE4MjE2XzQ1NjIwL3ByZXZpZXdfdGFsa18xLndlYnAiLCJuZWVkUmVtb3ZlQmFj%0D%0Aa2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6ImFiNDBhYTY2ZTlkNjRlZTU4ZjVkNzkw%0D%0AMTc2ZDQ3ZTRmIiwidXNlcm5hbWUiOiI0OWJkMjM1MDNiMGQ0ZDUzOTY5MjZmY2NjMTFlZWIwNSJ9&inIFrame=1";
-  const container = document.getElementById("avatar-container");
-  const iframe = document.createElement("iframe");
-  iframe.src = url;
-  iframe.style.width = "100%";
-  iframe.style.height = "100%";
-  iframe.style.border = "none";
-  iframe.allow = "microphone";
-  container.appendChild(iframe);
-})(globalThis);
+let audioChunks = [];
+let mediaRecorder;
+let audioBlob = null;
 
 const transcriptDiv = document.getElementById('transcript');
 const stopBtn = document.getElementById('stop-btn');
@@ -213,6 +193,18 @@ let vadStarted = false;
 let silenceTimeout = null;
 const silenceThreshold = 0.01;
 const silenceDelayMs = 2000;
+
+(function() {
+  const url = "https://labs.heygen.com/guest/streaming-embed?share=YOUR_SHARE_STRING&inIFrame=1";
+  const container = document.getElementById("avatar-container");
+  const iframe = document.createElement("iframe");
+  iframe.src = url;
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
+  iframe.allow = "microphone";
+  container.appendChild(iframe);
+})();
 
 function renderChatMessage(role, text) {
   const wrapper = document.createElement("div");
@@ -251,7 +243,6 @@ async function setupVAD() {
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  // 🔴 Start audio recording
   mediaRecorder = new MediaRecorder(stream);
   mediaRecorder.start();
   audioChunks = [];
@@ -293,37 +284,41 @@ async function setupVAD() {
   };
 }
 
-
 window.addEventListener('load', () => {
   setupVAD();
-  startRecognition(); // ← Start directly
+  startRecognition();
 });
 
-stopBtn.addEventListener('click', () => {
+stopBtn.addEventListener('click', async () => {
   if (recognition && isRecognizing) {
     recognition.stop();
     isRecognizing = false;
     renderChatMessage("interviewer", "[Transcription stopped]");
     transcriptText += "Interviewer: [Transcription stopped]\n";
-    emailjs.send("service_pt6xbks", "template_ubqh7du", { transcript: transcriptText })
-      .then(() => alert("Transcript emailed successfully!"))
-      .catch(e => alert("Failed to send email: " + e));
   }
+
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
-  mediaRecorder.stop();
-  setTimeout(() => {
-    if (audioBlob) {
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const a = document.createElement('a');
-      a.href = audioUrl;
-      a.download = 'interview-audio.webm';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(audioUrl);
-    }
-  }, 1000); // Give it time to finalize
-}
+    mediaRecorder.stop();
+
+    setTimeout(async () => {
+      if (audioBlob) {
+        const base64Audio = await blobToBase64(audioBlob);
+        // Optional: also encode transcript as a .txt file
+        // const base64Transcript = btoa(unescape(encodeURIComponent(transcriptText)));
+
+        emailjs.send("service_pt6xbks", "template_ubqh7du", {
+          transcript: transcriptText,
+          audio_file: base64Audio,
+          // transcript_file: base64Transcript
+        }).then(() => {
+          alert("✅ Transcript + audio emailed successfully!");
+        }).catch(err => {
+          console.error("❌ Email failed", err);
+          alert("Failed to send email.");
+        });
+      }
+    }, 1000);
+  }
 });
 
 downloadBtn.addEventListener('click', () => {
@@ -337,6 +332,15 @@ downloadBtn.addEventListener('click', () => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
 </script>
 
 </body>
